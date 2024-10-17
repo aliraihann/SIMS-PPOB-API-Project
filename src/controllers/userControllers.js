@@ -192,7 +192,7 @@ const updateProfileImage = async (req, res) => {
 
     // Extract the filename of the uploaded file for dev with multer disk storage
     let profileImage = `uploads/${req.file.filename}`;
-    if (profileImage === undefined) {
+    if (profileImage.includes("undefined")) {
       // for production purpose using multer memory storage
       profileImage = req.file.originalname;
     }
