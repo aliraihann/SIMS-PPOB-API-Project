@@ -18,23 +18,29 @@ const fileFilter = (req, file, cb) => {
   cb(null, true);
 };
 
-// intiliaze multer storage
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./src/uploads");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1000);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
-  },
-});
+// intiliaze multer storage for development
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./src/uploads");
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1000);
+//     cb(
+//       null,
+//       file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+//     );
+//   },
+// });
 
-// Initialize multer
+// initialize multer for development with diskStorage
+// const upload = multer({
+//   storage: storage,
+//   fileFilter: fileFilter,
+// });
+
+// initialize multer for production with memory storage
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   fileFilter: fileFilter,
 });
 
