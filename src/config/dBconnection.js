@@ -2,58 +2,67 @@ const { Pool } = require("pg");
 const { config } = require("dotenv");
 config();
 
-const databaseName = "Sims_PPOB_Database";
 
-// create database
-async function createDatabaseIfNotExists(dBName) {
-  const existingPool = new Pool({
-    user: "postgres",
-    host: "localhost",
-    port: 5432,
-    database: "postgres",
-    password: process.env.DB_PASSWORD,
-  });
-
-  try {
-    // check if the database already exist
-    const res = await existingPool.query(
-      "SELECT 1 FROM pg_database WHERE datname = $1",
-      [dBName]
-    );
-    // check the result of the database checking
-    if (res.rowCount === 0) {
-      // create new database
-      await existingPool.query(`CREATE DATABASE "${dBName}"`);
-      console.log(`Database ${dBName} created successfully`);
-      return true; // indicate database created
-    } else {
-      //database is exist
-      console.log(`Database ${dBName} already exist`);
-      return false; // indicate database has already exist
-    }
-  } catch (error) {
-    // error handling for database creation
-    console.error(`Error creating database: ${error.message}`);
-    return null; // indicate error
-  } finally {
-    // ending the existing pool to start new pool from the new database
-    await existingPool.end();
-  }
-}
-
-// check and create new database
-(async () => {
-  await createDatabaseIfNotExists(databaseName);
-})();
-
-// create new pool using the new database
+// create connection with railways credentials
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  port: 5432,
-  database: `${databaseName}`,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
 });
+
+// create database for dev
+// async function createDatabaseIfNotExists(dBName) {
+//   const existingPool = new Pool({
+//     user: "postgres",
+//     host: "localhost",
+//     port: 5432,
+//     database: "postgres",
+//     password: process.env.DB_PASSWORD,
+//   });
+
+//   try {
+//     // check if the database already exist
+//     const res = await existingPool.query(
+//       "SELECT 1 FROM pg_database WHERE datname = $1",
+//       [dBName]
+//     );
+//     // check the result of the database checking
+//     if (res.rowCount === 0) {
+//       // create new database
+//       await existingPool.query(`CREATE DATABASE "${dBName}"`);
+//       console.log(`Database ${dBName} created successfully`);
+//       return true; // indicate database created
+//     } else {
+//       //database is exist
+//       console.log(`Database ${dBName} already exist`);
+//       return false; // indicate database has already exist
+//     }
+//   } catch (error) {
+//     // error handling for database creation
+//     console.error(`Error creating database: ${error.message}`);
+//     return null; // indicate error
+//   } finally {
+//     // ending the existing pool to start new pool from the new database
+//     await existingPool.end();
+//   }
+// }
+
+// check and create new database
+// (async () => {
+//   await createDatabaseIfNotExists(databaseName);
+// })();
+
+// create new pool using the new database
+// create database for dev
+// const pool = new Pool({
+//   user: process.env.DB_USER_LOCAL,
+//   host: process.env.DB_HOST_LOCAL,
+//   port: process.env.DB_PORT_LOCAL,
+//   database: process.env.DB_NAME_LOCAL,
+//   password: process.env.DB_PASSWORD_LOCAL,
+// });
 
 // Error handling if the connection error
 pool.on("error", (err) => {
