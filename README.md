@@ -83,3 +83,47 @@ By understanding the relationships and attributes within this data model, users 
 sims-ppob-api-project-production.up.railway.app
 
 ## App Endpoint: 
+1. **User registration**:
+   - Method: POST
+   - Endpoint: /registration
+   -  Description: This endpoint registers a new user by taking their email, first name, last name, and password. It validates the input, checks if the user already exists, hashes the password, stores the user in the database, and initiates a new balance for the user.
+   -   Request Body:
+       - email: (string, required) The user's email address. Must follow a valid email format.
+       - first_name: (string, required) The user's first name.
+       - last_name: (string, required) The user's last name.
+       - password: (string, required) Must be at least 8 characters.
+           ```
+           {
+             "email": "user@nutech-integrasi.com",
+             "first_name": "User",
+             "last_name": "Nutech",
+             "password": "abcdef1234"
+           }
+           ```
+   -  Response:
+       * Success Response
+         - Status Code: 200
+         - Response Body:
+           ```
+           {
+             "status": 0,
+             "message": "Registrasi berhasil silahkan login",
+             "data": null
+           }
+           ```
+       * Error Response:
+         - Status Code: 400
+         - Response Body:
+           ```
+           {
+             "status": 102,
+             "message": "Error message here",
+             "data": null
+           }
+           ```
+
+          * Error Messages
+              - "Password minimal berjumlah 8 karakter": When the password is less than 8 characters.
+              - "Parameter email tidak sesuai format": When the email format is invalid.
+              - "Email telah digunakan": When the email is already registered.
+              - "Gagal membuat balance untuk user": When there is a failure in initiating the user's balance.
