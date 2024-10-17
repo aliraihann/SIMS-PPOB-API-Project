@@ -194,7 +194,7 @@ const updateProfileImage = async (req, res) => {
     let profileImage = `uploads/${req.file.filename}`;
     if (profileImage.includes("undefined")) {
       // for production purpose using multer memory storage
-      profileImage = req.file.originalname;
+      profileImage = `memorystorage/uploads/${req.file.originalname}`;
     }
 
     // set the update's data
