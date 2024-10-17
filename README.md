@@ -83,6 +83,7 @@ By understanding the relationships and attributes within this data model, users 
 sims-ppob-api-project-production.up.railway.app
 
 ## App Endpoint: 
+
 1. **User registration**:
    - Method: POST
    - Endpoint: /registration
@@ -127,3 +128,17 @@ sims-ppob-api-project-production.up.railway.app
               - "Parameter email tidak sesuai format": When the email format is invalid.
               - "Email telah digunakan": When the email is already registered.
               - "Gagal membuat balance untuk user": When there is a failure in initiating the user's balance.
+
+Here are the list of other endpoint:
+1. post - /login -> user login
+1. get - /profile -> get user's profile
+1. post - /profile/update -> Update user's profile
+1. post - /profile/image -> Update user's profile image
+2. get - /balance  -> Get user's balance
+3. get - /banner -> Get all banners
+4. get - /services -> Get all services
+5. post - /topup -> Top up balance
+6. post - /transaction -> Create transaction
+7. get - /transaction/history -> To get transaction history
+
+Note: please look up in the source code for more details on the endpoint requirement, function and etc
