@@ -190,8 +190,12 @@ const updateProfileImage = async (req, res) => {
       throw new Error("Gagal upload file");
     }
 
-    // Extract the filename (or URL) of the uploaded file
-    const profileImage = `uploads/${req.file.filename}`; // Adjust this according to your storage path
+    // Extract the filename of the uploaded file for dev with multer disk storage
+    let profileImage = `uploads/${req.file.filename}`;
+    if (profileImage === undefined) {
+      // for production purpose using multer memory storage
+      profileImage = req.file.originalname;
+    }
 
     // set the update's data
     const changes = {
