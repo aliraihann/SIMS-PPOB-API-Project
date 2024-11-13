@@ -328,6 +328,7 @@ sims-ppob-api-project-production.up.railway.app
         - The response includes the complete updated user profile with the new image path
           
 Here are the list of other endpoint:
+
 2. get - /balance  -> Get user's balance
 3. get - /banner -> Get all banners
 4. get - /services -> Get all services
