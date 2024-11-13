@@ -177,11 +177,157 @@ sims-ppob-api-project-production.up.railway.app
             - Store this token and include it in subsequent requests
             - Format: Include in Authorization header using Bearer scheme
 
+1. **User Profile**:
+    - Method: GET
+    - Endpoint: /profile
+    - Description: This endpoint retrieves the profile information for the authenticated user.
+    - Authentication: Required (Bearer Token)
+    - Request Headers:
+        ```
+        Authorization: Bearer <jwt_token>
+        ```
+    - Response:
+        - Success Response:
+            - Status Code: 200
+            - Response Body:
+                ```
+                {
+                    "status": 0,
+                    "message": "Sukses",
+                    "data": {
+                        "email": "user@example.com",
+                        "first_name": "User",
+                        "last_name": "Example",
+                        "profile_image": "memorystorage/uploads/background.jpg"
+                    }
+                }
+                ```
+        - Error Response:
+            - Status Code: 401
+            - Response Body:
+                ```
+                {
+                    "status": 108,
+                    "message": "Token tidak valid atau kadaluwarsa",
+                    "data": null
+                }
+                ```
+    - Notes:
+        - This endpoint requires a valid JWT token obtained from the login endpoint
+        - The token must be included in the Authorization header using the Bearer scheme
+       - The endpoint will return the profile information for the authenticated user
+
+
+1. **Update User Profile**:
+    - Method: POST
+    - Endpoint: /profile/update
+    - Description: This endpoint updates the authenticated user's profile information including first name and last name.
+    - Authentication: Required (Bearer Token)
+    - Request:
+        - Headers:
+            ```
+                Authorization: Bearer <jwt_token>
+            ```
+        - Request Body:
+            - first_name: (string, required) The user's new first name
+            - last_name: (string, required) The user's new last name
+            ```
+                {
+                    "first_name": "User first name edited",
+                    "last_name": "Last name edited"
+                }
+            ```
+    - Response:
+        - Success Response:
+            - Status Code: 200
+            - Response Body:
+                ```
+                {
+                    "status": 0,
+                    "message": "Update Profile berhasil",
+                    "data": {
+                        "email": "user@example.com",
+                        "first_name": "User Edited",
+                        "last_name": "Nutech Edited"
+                    }
+                }
+                ```
+        - Error Response:
+            - Status Code: 400/401
+            - Response Body:
+                ```
+                {
+                    "status": 108,
+                    "message": "Error message here",
+                    "data": null
+                }
+                ```
+            - Error Messages:
+                - "Gagal update profile": When the profile update operation fails
+                - "Token tidak valid atau kadaluwarsa": When the authentication token is invalid or expired (Status Code: 401)
+
+
+1. **Update Profile Image**:
+    - Method: POST
+    - Endpoint: /profile/image
+    - Description: This endpoint allows users to upload and update their profile image. The endpoint accepts JPEG, JPG, or PNG image files.
+    - Authentication: Required (Bearer Token)
+    - Request
+        - Headers:
+            ```
+                Authorization: Bearer <jwt_token>
+            ```
+        - Request Body:
+            - file: (file, required) The image file to upload
+            ```
+                Form-data:
+                file: <image_file>
+            ```
+        - File Requirements
+            - Allowed File Types:
+                - JPEG/JPG
+                - PNG
+
+    - Response:
+        - Success Response:
+        - Status Code: 200
+        - Response Body:
+            ```
+            {
+                "status": 0,
+                "message": "Update Profile berhasil",
+                "data": {
+                    "email": "user@example.com",
+                    "first_name": "User",
+                    "last_name": "Example",
+                    "profile_image": "memorystorage/uploads/image.jpg"
+                }
+            }
+            ```
+        - Error Response:
+            - Status Code: 400/401
+            - Response Body:
+                ```
+                {
+                    "status": 102,
+                    "message": "Error message here",
+                    "data": null
+                }
+                ```
+        - Error Messages:
+            - "Format Image tidak sesuai": When the uploaded file type is not supported
+            - "Gagal upload file": When no file is uploaded or upload fails
+            - "Gagal update profile": When the profile update operation fails
+            - "Token tidak valid atau kadaluwarsa": When the authentication token is invalid (Status Code: 401)
+    - Notes
+        - The image must be uploaded as multipart/form-data
+        - Only JPEG, JPG, and PNG formats are accepted
+        - The file should be sent with the field name "file"
+        - The endpoint uses Multer for file handling
+        - Files are stored differently in development (disk storage) and production (memory storage)
+        - The response includes the complete updated user profile with the new image path
+          
 Here are the list of other endpoint:
-1. post - /login -> user login
-1. get - /profile -> get user's profile
-1. post - /profile/update -> Update user's profile
-1. post - /profile/image -> Update user's profile image
 2. get - /balance  -> Get user's balance
 3. get - /banner -> Get all banners
 4. get - /services -> Get all services
