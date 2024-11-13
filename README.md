@@ -128,6 +128,54 @@ sims-ppob-api-project-production.up.railway.app
               - "Parameter email tidak sesuai format": When the email format is invalid.
               - "Email telah digunakan": When the email is already registered.
               - "Gagal membuat balance untuk user": When there is a failure in initiating the user's balance.
+           
+1. **User Login**:
+   - Method: POST
+   - Endpoint: /login
+   -  Description: This endpoint authenticates a user using their email and password. It validates the email format, verifies the user's existence, checks the password, and returns a JWT token upon successful authentication.
+
+   - Request Body:
+        - email: (string, required) The user's email address. Must follow a valid email format.
+        - password: (string, required) The user's password.
+            ```
+            {
+              "email": "user@nutech-integrasi.com",
+              "password": "abcdef1234"
+            }
+            ```
+    - Response:
+        - Success Response: 
+            - Status Code: 200
+            - Response Body:
+            ```
+            {
+              "status": 0,
+              "message": "Login Sukses",
+              "data": {
+                "token": "eyJhbGciOiJIUzI1NiIs..."
+            }
+            ```
+        - Error Response:
+            - Status Code: 400/500
+            - Response Body:
+            ```
+            {
+              "status": 102,
+              "message": "Error message here",
+              "data": null
+            }
+            ```
+            - Error Messages:
+                - Status 102:
+                    - "Parameter email tidak sesuai format": When the email format is invalid
+                - Status 103:
+                    - "Username atau password salah": When the email doesn't exist or password is incorrect
+                    - "Internal server error": When an unexpected server error occurs (Status Code: 500)
+
+        - Authentication:
+            - After successful login, a JWT token is returned
+            - Store this token and include it in subsequent requests
+            - Format: Include in Authorization header using Bearer scheme
 
 Here are the list of other endpoint:
 1. post - /login -> user login
