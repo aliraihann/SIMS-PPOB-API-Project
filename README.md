@@ -326,14 +326,148 @@ sims-ppob-api-project-production.up.railway.app
         - The endpoint uses Multer for file handling
         - Files are stored differently in development (disk storage) and production (memory storage)
         - The response includes the complete updated user profile with the new image path
+
+1. **Get User Balance**:
+    - Method: GET
+    - Endpoint: /balance
+    - Description: This endpoint retrieves the current balance for the authenticated user.
+    - Authentication: Required (Bearer Token)
+    - Request:
+        - Headers:
+            ```
+                Authorization: Bearer <jwt_token>
+            ```
+    - Response:
+        - Success Response:
+            - Status Code: 200
+            - Response Body:
+                ```
+                    {
+                        "status": 0,
+                        "message": "Get Balance Berhasil",
+                        "data": {
+                            "balance": 10000
+                        }
+                    }
+                ```
+        - Error Response:
+            - Status Code: 400/401
+            - Response Body:
+                ```
+                    {
+                        "status": 108,
+                        "message": "Error message here",
+                        "data": null
+                    }
+                ```
+            - Error Messages:
+                - Status 401: "Token tidak valid atau kadaluwarsa" (Invalid or expired token)
+                - Status 400: Various error messages based on the error encountered during balance retrieval
+
+
+1. **Top Up Balance**:
+    - Method: POST
+    - Endpoint: /topup
+    - Description: This endpoint allows users to add funds to their balance through a top-up transaction.
+    - Authentication: Required (Bearer Token)
+    - Request:
+        - Headers:
+            ```
+                    Authorization: Bearer <jwt_token>
+            ```
+        - Request Body:
+            ```
+                {
+                    "top_up_amount": 10000 // Integer value required
+                }
+            ```
+            - Body Parameters:
+                - top_up_amount (integer, required): Amount to add to the balance
+                - Must be a positive integer value
+    - Response:
+        - Success Response:
+            - Status Code: 200
+            - Response Body:
+                ```
+                    {
+                        "status": 0,
+                        "message": "Top Up Balance berhasil",
+                        "data": {
+                            "balance": {
+                                "balance": 20000
+                            }
+                        }
+                    }
+                ```
+        - Error Response:
+            - Status Code: 400/401
+            - Response Body:
+                ```
+                    {
+                        "status": 102,
+                        "message": "Error message here",
+                        "data": null
+                    }
+                ```
+            - Error Messages:
+            - "Parameter amount hanya boleh angka dan tidak boleh lebih kecil dari 0": When amount is not an integer or is less than or equal to 0
+            - "Token tidak valid atau kadaluwarsa": When the authentication token is invalid (Status Code: 401)
+            - Other error messages based on database operations
+    - Notes:
+        - The endpoint performs several operations in sequence:
+            - Validates the top-up amount (must be positive integer)
+            - Retrieves user information using email from JWT token
+            - Fetches current balance
+            - Calculates new balance
+            - Generates unique invoice number (format: INV2024/{timestamp})
+            - Updates user balance
+            - Creates transaction record
+        - Transaction Details:
+            - Type: "TOPUP"
+            - Description: "Top Up balance"
+            - Invoice Number Format: "INV2024/{timestamp}"
+
+1. **Get Banner**:
+- Method: GET
+- Endpoint: /banner
+- Description: This endpoint retrieves all available banner information.
+- Authentication: Not Required
+- Request
+    - Headers: None required
+- Response:
+    - Success Response:
+        - Status Code: 200
+        - Response Body:
+            ```
+                {
+                    "status": 0,
+                    "message": "Sukses",
+                    "data": [
+                        // Array of banner objects
+                    ]
+                }
+            ```
+    - Error Response:
+        - Status Code: 400
+        - Response Body:
+            ```
+                {
+                    "status": 108,
+                    "message": "Error message here",
+                    "data": null
+                }
+            ```
+        - Error Messages:
+            - "Tidak ada informasi banner": When no banners are found in the database
+            - Other error messages based on database operation failures
+    - Notes:
+        - This is a public endpoint that doesn't require authentication
+        - Returns an array of banner information
+        - Empty banner list is treated as an error condition
           
 Here are the list of other endpoint:
-
-2. get - /balance  -> Get user's balance
-3. get - /banner -> Get all banners
-4. get - /services -> Get all services
-5. post - /topup -> Top up balance
-6. post - /transaction -> Create transaction
-7. get - /transaction/history -> To get transaction history
+1. get - /services -> Get all services
+1. post - /transaction -> Create transaction
+1. get - /transaction/history -> To get transaction history
 
 Note: please look up in the source code for more details on the endpoint requirement, function and etc
