@@ -364,7 +364,6 @@ sims-ppob-api-project-production.up.railway.app
                 - Status 401: "Token tidak valid atau kadaluwarsa" (Invalid or expired token)
                 - Status 400: Various error messages based on the error encountered during balance retrieval
 
-
 1. **Top Up Balance**:
     - Method: POST
     - Endpoint: /topup
@@ -428,46 +427,146 @@ sims-ppob-api-project-production.up.railway.app
             - Invoice Number Format: "INV2024/{timestamp}"
 
 1. **Get Banner**:
-- Method: GET
-- Endpoint: /banner
-- Description: This endpoint retrieves all available banner information.
-- Authentication: Not Required
-- Request
-    - Headers: None required
-- Response:
-    - Success Response:
+    - Method: GET
+    - Endpoint: /banner
+    - Description: This endpoint retrieves all available banner information.
+    - Authentication: Not Required
+    - Request
+        - Headers: None required
+    - Response:
+        - Success Response:
+            - Status Code: 200
+            - Response Body:
+                ```
+                    {
+                        "status": 0,
+                        "message": "Sukses",
+                        "data": [
+                            // Array of banner objects
+                        ]
+                    }
+                ```
+        - Error Response:
+            - Status Code: 400
+            - Response Body:
+                ```
+                    {
+                        "status": 108,
+                        "message": "Error message here",
+                        "data": null
+                    }
+                ```
+            - Error Messages:
+                - "Tidak ada informasi banner": When no banners are found in the database
+                - Other error messages based on database operation failures
+        - Notes:
+            - This is a public endpoint that doesn't require authentication
+            - Returns an array of banner information
+            - Empty banner list is treated as an error condition
+
+1. **Get Service**:
+    - Method: GET
+    - Endpoint: /services
+    - Description: This endpoint retrieves all available services in the system.
+    - Authentication: Required (Bearer Token)
+    - Request:
+        - Headers:
+            ```
+                Authorization: Bearer <jwt_token>
+            ```
+    - Response:
+        - Success Response:
+        - Status Code: 200
+        - Response Body:
+            ```
+            {
+                "status": 0,
+                "message": "Sukses",
+                "data": [
+                    // Array of service objects
+                ]
+            }
+            ```
+    - Error Response:
+        - Status Code: 400/401
+        - Response Body:
+        ```
+            {
+                "status": 108,
+                "message": "Error message here",
+                "data": null
+            }
+        ```
+        - Error Messages:
+            - "Token tidak valid atau kadaluwarsa": When the authentication token is invalid (Status Code: 401)
+            - Other error messages based on database operation failures
+
+1. **Get Transaction History**:
+    - Method: GET
+    - Endpoint: /transaction/history
+    - Description: This endpoint retrieves the user's transaction history with optional pagination.
+    - Authentication: Required (Bearer Token)
+    - Request
+        - Headers:
+            ```
+                Authorization: Bearer <jwt_token>
+            ```
+        - Query Parameters:
+            - limit (optional): Number of records to return per page
+            - offset (optional): Number of records to skip
+                ```
+                    /transaction/history?limit=10&offset=0
+                ```
+        - Parameter Rules:
+            - Both limit and offset must be non-negative integers
+            - If limit is provided without offset, offset defaults to 0
+            - If neither is provided, returns all records
+    - Response:
+        - Success Response:
         - Status Code: 200
         - Response Body:
             ```
                 {
                     "status": 0,
-                    "message": "Sukses",
-                    "data": [
-                        // Array of banner objects
-                    ]
+                    "message": "Get History Berhasil",
+                    "data": {
+                        "offset": 0,    // Current offset
+                        "limit": 10,    // Current limit
+                        "records": [
+                            // Array of transaction records
+                        ]
+                    }
                 }
             ```
     - Error Response:
-        - Status Code: 400
+        - Status Code: 400/401
         - Response Body:
             ```
                 {
-                    "status": 108,
+                    "status": 102,
                     "message": "Error message here",
                     "data": null
                 }
             ```
         - Error Messages:
-            - "Tidak ada informasi banner": When no banners are found in the database
-            - Other error messages based on database operation failures
+            - "Limit harus sebuah angka positif": When limit parameter is invalid
+            - "Offset harus sebuah angka positif": When offset parameter is invalid
+            - "Token tidak tidak valid atau kadaluwarsa": When authentication fails
     - Notes:
-        - This is a public endpoint that doesn't require authentication
-        - Returns an array of banner information
-        - Empty banner list is treated as an error condition
-          
-Here are the list of other endpoint:
-1. get - /services -> Get all services
-1. post - /transaction -> Create transaction
-1. get - /transaction/history -> To get transaction history
-
-Note: please look up in the source code for more details on the endpoint requirement, function and etc
+        - Pagination:
+            - Use limit and offset for paginated results
+            - Example: 
+                ```
+                    limit=10&offset=0 returns first 10 records
+                    limit=10&offset=10 returns records 11-20
+                ```
+            - Default Values:
+                - If no pagination parameters are provided, returns all records
+                - If only limit is provided, offset defaults to 0
+            - Input Validation:
+                - Both limit and offset must be non-negative integers
+                - Invalid values result in a 400 error response
+        - Response Structure:
+            - offset: Current offset value (defaults to 0)
+            - limit: Current limit value (defaults to 0)
+            - records: Array of transaction records
